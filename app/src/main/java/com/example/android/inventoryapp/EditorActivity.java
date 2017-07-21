@@ -42,7 +42,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private EditText mPriceEditText;
     private EditText mStockEditText;
     private EditText mSupplierNameEditText;
-    private EditText mSupplierWebsiteEditText;
+    private EditText mSupplierPhoneEditText;
     private Button mAddImageButton;
     private ImageView mImageView;
     private Button mPlusButton;
@@ -57,7 +57,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private Uri imageURI;
 
-    private String supplierWebsite;
+    private String supplierPhone;
 
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
@@ -94,7 +94,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mPriceEditText = (EditText) findViewById(R.id.product_price_edit);
         mStockEditText = (EditText) findViewById(R.id.product_stock_edit);
         mSupplierNameEditText = (EditText) findViewById(R.id.supplier_name);
-        mSupplierWebsiteEditText = (EditText) findViewById(R.id.supplier_website);
+        mSupplierPhoneEditText = (EditText) findViewById(R.id.supplier_website);
         mAddImageButton = (Button) findViewById(R.id.add_image);
         mImageView = (ImageView) findViewById(R.id.image);
 
@@ -104,24 +104,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mPriceEditText.setOnTouchListener(mTouchListener);
         mStockEditText.setOnTouchListener(mTouchListener);
         mSupplierNameEditText.setOnTouchListener(mTouchListener);
-        mSupplierWebsiteEditText.setOnTouchListener(mTouchListener);
+        mSupplierPhoneEditText.setOnTouchListener(mTouchListener);
 
         mOrderMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               String website = mSupplierWebsiteEditText.getText().toString().trim();
+               String phoneNumber = mSupplierPhoneEditText.getText().toString().trim();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
+                if (intent.resolveActivity(getPackageManager()) != null) {
 
-                if(website.contains("http")){
-
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(website));
-                    startActivity(i);
-                }else {
-                    website = "https://" + website;
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(website));
-                    startActivity(i);
+                    startActivity(intent);
                 }
 
             }
@@ -154,11 +148,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String priceString = mPriceEditText.getText().toString().trim();
         String stockString = mStockEditText.getText().toString().trim();
         String supplierNameString = mSupplierNameEditText.getText().toString().trim();
-        String supplierWebsiteString = mSupplierWebsiteEditText.getText().toString().trim();
+        String supplierPhoneString = mSupplierPhoneEditText.getText().toString().trim();
 
         if(mCurrentMobileUri== null && TextUtils.isEmpty(nameString) &&
                 TextUtils.isEmpty(priceString) && TextUtils.isEmpty(stockString) &&
-                TextUtils.isEmpty(supplierNameString) && TextUtils.isEmpty(supplierWebsiteString)){
+                TextUtils.isEmpty(supplierNameString) && TextUtils.isEmpty(supplierPhoneString)){
             return;
         }
 
@@ -182,7 +176,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         values.put(MobileEntry.COLUMN_STOCK, stock);
         values.put(MobileEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
-        values.put(MobileEntry.COLUMN_SUPPLIER_WEBSITE, supplierWebsiteString);
+        values.put(MobileEntry.COLUMN_SUPPLIER_PHONE, supplierPhoneString);
 
         if (imageURI != null) {
 
@@ -310,7 +304,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 MobileEntry.COLUMN_PRICE,
                 MobileEntry.COLUMN_STOCK,
                 MobileEntry.COLUMN_SUPPLIER_NAME,
-                MobileEntry.COLUMN_SUPPLIER_WEBSITE,
+                MobileEntry.COLUMN_SUPPLIER_PHONE,
                 MobileEntry.COLUMN_IMAGE
         };
 
@@ -329,14 +323,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             int priceColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_PRICE);
             int stockColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_STOCK);
             int supplierNameColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_SUPPLIER_NAME);
-            int supplierWebsiteColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_SUPPLIER_WEBSITE);
+            int supplierPhoneColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_SUPPLIER_PHONE);
             int imageColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_IMAGE);
 
             String name = data.getString(nameColumnIndex);
             int price = data.getInt(priceColumnIndex);
             stock = data.getInt(stockColumnIndex);
             String supplierName = data.getString(supplierNameColumnIndex);
-            supplierWebsite = data.getString(supplierWebsiteColumnIndex);
+            supplierPhone = data.getString(supplierPhoneColumnIndex);
             byte[] imageArray = data.getBlob(imageColumnIndex);
 
             mPlusButton.setOnClickListener(new View.OnClickListener() {
@@ -361,7 +355,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mPriceEditText.setText(price+"");
             mStockEditText.setText(stock+"");
             mSupplierNameEditText.setText(supplierName);
-            mSupplierWebsiteEditText.setText(supplierWebsite);
+            mSupplierPhoneEditText.setText(supplierPhone);
 
             if(imageArray != null) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
@@ -380,7 +374,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mPriceEditText.setText("");
         mStockEditText.setText("");
         mSupplierNameEditText.setText("");
-        mSupplierWebsiteEditText.setText("");
+        mSupplierPhoneEditText.setText("");
         mImageView.setImageBitmap(null);
 
     }

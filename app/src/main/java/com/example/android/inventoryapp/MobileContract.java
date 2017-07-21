@@ -33,7 +33,7 @@ public class MobileContract {
         public static String COLUMN_PRICE = "price";
         public static String COLUMN_STOCK = "stock";
         public static String COLUMN_SUPPLIER_NAME ="supplier_name";
-        public static String COLUMN_SUPPLIER_WEBSITE = "supplier_website";
+        public static String COLUMN_SUPPLIER_PHONE = "supplier_phone";
         public static String COLUMN_IMAGE = "image";
 
         public static String TABLE_NAME = "mobile";
