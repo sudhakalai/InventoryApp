@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.android.inventoryapp.MobileContract.MobileEntry;
 
@@ -102,20 +103,28 @@ public class MobileProvider extends ContentProvider{
 
     private Uri insertMobile(Uri uri, ContentValues values){
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        long id = db.insert(MobileEntry.TABLE_NAME, null, values);
 
 
+        if(validateInput(values)){
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            long id = db.insert(MobileEntry.TABLE_NAME, null, values);
 
-        if (id == -1) {
-            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+
+
+            if (id == -1) {
+                Log.e(LOG_TAG, "Failed to insert row for " + uri);
+                return null;
+            }
+
+            getContext().getContentResolver().notifyChange(uri, null);
+
+            return ContentUris.withAppendedId(uri, id);
+        }else{
+            Toast.makeText(getContext(), "One or More field were empty", Toast.LENGTH_SHORT).show();
             return null;
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
 
-        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
@@ -167,6 +176,9 @@ public class MobileProvider extends ContentProvider{
     }
 
     private int updateMobile(Uri uri, ContentValues values, String selection, String[] selectionArgs){
+
+        if(validateInput(values)){
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         int rowsUpdated = db.update(MobileEntry.TABLE_NAME, values, selection, selectionArgs);
@@ -175,5 +187,39 @@ public class MobileProvider extends ContentProvider{
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
+        }else {
+            Toast.makeText(getContext(), "One or More field were empty", Toast.LENGTH_SHORT).show();
+            return 0;
+        }
+    }
+
+    private boolean validateInput(ContentValues values){
+
+        String name = values.getAsString(MobileEntry.COLUMN_NAME);
+        Integer price = values.getAsInteger(MobileEntry.COLUMN_PRICE);
+        Integer stock = values.getAsInteger(MobileEntry.COLUMN_STOCK);
+        String supplierName = values.getAsString(MobileEntry.COLUMN_SUPPLIER_NAME);
+        String supplierPhone = values.getAsString(MobileEntry.COLUMN_SUPPLIER_PHONE);
+
+
+        if(name == null || name.length() == 0){
+            return false;
+        }
+        if(price != null && price<=0){
+            return false;
+        }
+        if(stock != null && stock<=0){
+            return false;
+        }
+        if(supplierName == null || supplierName.length() == 0){
+            return false;
+        }
+        if(supplierPhone == null || supplierPhone.length() == 0){
+            return false;
+        }
+
+
+
+        return true;
     }
 }
