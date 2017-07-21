@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Inventory App</string>
+    <string name="edit_mobile">Edit Mobile</string>
+    <string name="add_mobile">Add a Mobile</string>
+    <string name="editor_insert_mobile_failed">Failed to insert Mobile</string>
+    <string name="editor_insert_mobile_successful">Mobile inserted successfully</string>
+    <string name="editor_update_mobile_failed">Update failed</string>
+    <string name="editor_update_mobile_successful">Update successful</string>
+
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+
+    <string name="discard">Discard</string>
+
+    <string name="keep_editing">Keep Editing</string>
+
+    <string name="delete_dialog_msg">Delete this Mobile?</string>
+
+    <string name="delete">Delete</string>
+
+    <string name="cancel">Cancel</string>
+
+    <string name="editor_delete_mobile_failed">Deletion failed</string>
+    <string name="editor_delete_mobile_successful">Deletion successful</string>
+
+
+</resources>
