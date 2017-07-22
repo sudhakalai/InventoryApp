@@ -27,6 +27,8 @@ public class MobileProvider extends ContentProvider{
 
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
+    private final int  MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+
     static {
         sUriMatcher.addURI(MobileContract.CONTENT_AUTHORITY, MobileContract.PATH_MOBILE, MOBILE);
         sUriMatcher.addURI(MobileContract.CONTENT_AUTHORITY, MobileContract.PATH_MOBILE+ "/#", MOBILE_ID);
@@ -176,8 +178,6 @@ public class MobileProvider extends ContentProvider{
     }
 
     private int updateMobile(Uri uri, ContentValues values, String selection, String[] selectionArgs){
-
-
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
