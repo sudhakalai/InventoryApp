@@ -28,7 +28,7 @@ public class MobileDbHelper extends SQLiteOpenHelper {
                 +MobileEntry.COLUMN_STOCK+ " INTEGER NOT NULL , "
                 +MobileEntry.COLUMN_SUPPLIER_NAME + " TEXT NOT NULL , "
                 +MobileEntry.COLUMN_SUPPLIER_PHONE+ " TEXT NOT NULL , "
-                +MobileEntry.COLUMN_IMAGE+ " BLOB );";
+                +MobileEntry.COLUMN_IMAGE+ " TEXT );";
 
         db.execSQL(SQL_CREATE_MOBILE_TABLE);
 

@@ -177,7 +177,7 @@ public class MobileProvider extends ContentProvider{
 
     private int updateMobile(Uri uri, ContentValues values, String selection, String[] selectionArgs){
 
-        if(validateInput(values)){
+
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -187,10 +187,7 @@ public class MobileProvider extends ContentProvider{
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsUpdated;
-        }else {
-            Toast.makeText(getContext(), "One or More field were empty", Toast.LENGTH_SHORT).show();
-            return 0;
-        }
+
     }
 
     private boolean validateInput(ContentValues values){

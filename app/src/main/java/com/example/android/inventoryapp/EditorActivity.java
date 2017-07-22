@@ -1,5 +1,6 @@
 package com.example.android.inventoryapp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
@@ -8,12 +9,13 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -26,9 +28,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.android.inventoryapp.MobileContract.MobileEntry;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Created by Sudha on 19-Jul-17.
@@ -49,6 +48,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private Button mMinusButton;
     private Button mOrderMoreButton;
 
+    //Global variable declaration
     int stock;
 
     private boolean mMobileHasChanged = false;
@@ -59,6 +59,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private String supplierPhone;
 
+    private final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+
+    //Setting onTouchListener
+
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -68,28 +72,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     };
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        Intent intent = getIntent();
-        mCurrentMobileUri = intent.getData();
-
+        //intialising the text views
         mOrderMoreButton = (Button) findViewById(R.id.order);
         mPlusButton = (Button) findViewById(R.id.plus_button);
         mMinusButton  = (Button) findViewById(R.id.minus_button);
-
-        if(mCurrentMobileUri == null){
-            setTitle(getString(R.string.add_mobile));
-            mOrderMoreButton.setVisibility(View.GONE);
-            mPlusButton.setVisibility(View.GONE);
-            mMinusButton.setVisibility(View.GONE);
-        }else{
-            setTitle(getString(R.string.edit_mobile));
-            getLoaderManager().initLoader(EXISTING_MOBILE_LOADER, null, this);
-        }
-
         mNameEditText = (EditText) findViewById(R.id.product_name_edit);
         mPriceEditText = (EditText) findViewById(R.id.product_price_edit);
         mStockEditText = (EditText) findViewById(R.id.product_stock_edit);
@@ -98,14 +90,30 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mAddImageButton = (Button) findViewById(R.id.add_image);
         mImageView = (ImageView) findViewById(R.id.image);
 
+        //Getting Uri from the intent from MainActivity
+        Intent intent = getIntent();
+        mCurrentMobileUri = intent.getData();
 
+        //Reusing the same editor activity for Adding and editing a mobile
+        if(mCurrentMobileUri == null){
+            setTitle(getString(R.string.add_mobile));
+            mOrderMoreButton.setVisibility(View.GONE);
+            mPlusButton.setVisibility(View.GONE);
+            mMinusButton.setVisibility(View.GONE);
+        }else{
+            setTitle(getString(R.string.edit_mobile));
+            mAddImageButton.setVisibility(View.GONE);
+            getLoaderManager().initLoader(EXISTING_MOBILE_LOADER, null, this);
+        }
 
+        //Attaching onTouchListeners to textviews
         mNameEditText.setOnTouchListener(mTouchListener);
         mPriceEditText.setOnTouchListener(mTouchListener);
         mStockEditText.setOnTouchListener(mTouchListener);
         mSupplierNameEditText.setOnTouchListener(mTouchListener);
         mSupplierPhoneEditText.setOnTouchListener(mTouchListener);
 
+        //Setting onClickLister to Order More button
         mOrderMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +129,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             }
         });
 
-
+        //Setting onClickLister to Add image button
         mAddImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +137,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
             }
         });
-
         
     }
 
@@ -139,11 +146,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         //Detects request codes
         if (requestCode == GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
             imageURI = data.getData();
+            mImageView.setImageURI(null);
+            mImageView.setImageURI(imageURI);
 
         }
     }
 
+    //This method save mobile info
     private void saveMobile(){
+
+        //Getting text from text views
         String nameString = mNameEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
         String stockString = mStockEditText.getText().toString().trim();
@@ -156,6 +168,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             return;
         }
 
+        //Attaching the values to ContentValues
+
         ContentValues values = new ContentValues();
 
             values.put(MobileEntry.COLUMN_NAME, nameString);
@@ -165,14 +179,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             price = Integer.parseInt(priceString);
         }
 
-
-
         values.put(MobileEntry.COLUMN_PRICE, price);
 
         if(!TextUtils.isEmpty(stockString)){
             stock = Integer.parseInt(stockString);
         }
-
 
         values.put(MobileEntry.COLUMN_STOCK, stock);
         values.put(MobileEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
@@ -180,20 +191,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         if (imageURI != null) {
 
-            ByteArrayOutputStream byteOT = new ByteArrayOutputStream();
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteOT);
-            byte[] photo = byteOT.toByteArray();
+            String photoString = imageURI.toString();
+            values.put(MobileEntry.COLUMN_IMAGE, photoString);
 
-            values.put(MobileEntry.COLUMN_IMAGE, photo);
         }
-
-
 
         if(mCurrentMobileUri == null){
             Uri newUri = getContentResolver().insert(MobileEntry.CONTENT_URI, values);
@@ -251,23 +252,24 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             case R.id.home:
 
                 if (!mMobileHasChanged) {
-                    finish();
+                    NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                    return true;
+                } else {
+                    // Otherwise if there are unsaved changes, setup a dialog to warn the user.
+                    // Create a click listener to handle the user confirming that
+                    // changes should be discarded
+                    DialogInterface.OnClickListener discardButtonClickListener =
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // User clicked "Discard" button , navigate to parent activity
+                                    NavUtils.navigateUpFromSameTask(EditorActivity.this);
+                                }
+                            };
+                    // Show a dialog that notifies the user they have unsaved changes
+                    showUnsavedChangesDialog(discardButtonClickListener);
                     return true;
                 }
-                // Otherwise if there are unsaved changes, setup a dialog to warn the user.
-                // Create a click listener to handle the user confirming that changes should be discarded.
-                DialogInterface.OnClickListener discardButtonClickListener =
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // User clicked "Discard" button, navigate to parent activity.
-                                finish();
-                            }
-                        };
-
-                // Show a dialog that notifies the user they have unsaved changes
-                showUnsavedChangesDialog(discardButtonClickListener);
-                return true;
 
         }
 
@@ -319,6 +321,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }
         if(data.moveToFirst()){
 
+            //Getting Column index from cursor
             int nameColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_NAME);
             int priceColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_PRICE);
             int stockColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_STOCK);
@@ -326,13 +329,16 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             int supplierPhoneColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_SUPPLIER_PHONE);
             int imageColumnIndex = data.getColumnIndex(MobileEntry.COLUMN_IMAGE);
 
+            //Extracting values from cursor
             String name = data.getString(nameColumnIndex);
             int price = data.getInt(priceColumnIndex);
             stock = data.getInt(stockColumnIndex);
             String supplierName = data.getString(supplierNameColumnIndex);
             supplierPhone = data.getString(supplierPhoneColumnIndex);
-            byte[] imageArray = data.getBlob(imageColumnIndex);
+            String image = data.getString(imageColumnIndex);
+            Uri imageUri = Uri.parse(image);
 
+            //Increase stock
             mPlusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -341,6 +347,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 }
             });
 
+            //Decrease stock
             mMinusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -351,20 +358,70 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 }
             });
 
+            //Setting Text
             mNameEditText.setText(name);
             mPriceEditText.setText(price+"");
             mStockEditText.setText(stock+"");
             mSupplierNameEditText.setText(supplierName);
             mSupplierPhoneEditText.setText(supplierPhone);
+            mImageView.setImageURI(null);
 
-            if(imageArray != null) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
-                mImageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, mImageView.getWidth(), mImageView.getHeight(), false));
+            // Here, thisActivity is the current activity
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_CONTACTS},
+                            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
             }
+            mImageView.setImageURI(imageUri);
 
 
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                   Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     @Override
@@ -451,6 +508,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Close the activity
         finish();
     }
+
 
 
 }

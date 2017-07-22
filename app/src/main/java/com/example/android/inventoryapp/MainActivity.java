@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Intialising fab
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,15 +44,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mDbHelper = new MobileDbHelper(this);
 
-        ListView listView = (ListView) findViewById(R.id.list);
+        ListView listView = (ListView) findViewById(R.id.list);//Intitialising Listview
 
-        View emptyView = findViewById(R.id.empty_view);
+        View emptyView = findViewById(R.id.empty_view);// empty view
 
         listView.setEmptyView(emptyView);
 
         mCursorAdapter = new MobileCursorAdapter(this, null);
 
-        listView.setAdapter(mCursorAdapter);
+        listView.setAdapter(mCursorAdapter); //Attaching adapter to listview
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mCursorAdapter.swapCursor(null);
     }
 
+    //Deletes All pets
     private void deleteAllPets (){
         int rowsDeleted = getContentResolver().delete(MobileEntry.CONTENT_URI, null, null);
         Log.v("MainActivity", rowsDeleted + "rows deleted from database");

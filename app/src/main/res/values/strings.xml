@@ -22,5 +22,15 @@
     <string name="editor_delete_mobile_failed">Deletion failed</string>
     <string name="editor_delete_mobile_successful">Deletion successful</string>
 
+    <string name="product_name">Product name</string>
+    <string name="product_price">Product price</string>
+    <string name="product_stock">Stock</string>
+    <string name="supplier_name">Supplier name</string>
+    <string name="supplier_phone">Supplier phone</string>
+
+
+
+
+
 
 </resources>

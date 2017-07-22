@@ -18,8 +18,7 @@ import android.widget.TextView;
 
 public class MobileCursorAdapter extends CursorAdapter {
 
-    private int stockValue;
-    private TextView stockTextView;
+
 
     public MobileCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
@@ -35,7 +34,7 @@ public class MobileCursorAdapter extends CursorAdapter {
 
         TextView nameTextView = (TextView) view.findViewById(R.id.product_name);
         TextView priceTextView = (TextView) view.findViewById(R.id.product_price);
-        stockTextView = (TextView) view.findViewById(R.id.product_stock);
+        final TextView stockTextView = (TextView) view.findViewById(R.id.product_stock);
 
         int nameColumnIndex = cursor.getColumnIndex(MobileContract.MobileEntry.COLUMN_NAME);
         int priceColumnIndex = cursor.getColumnIndex(MobileContract.MobileEntry.COLUMN_PRICE);
@@ -43,7 +42,7 @@ public class MobileCursorAdapter extends CursorAdapter {
 
         String mobileName = cursor.getString(nameColumnIndex);
         int priceValue = cursor.getInt(priceColumnIndex);
-        stockValue = cursor.getInt(stockColumnIndex);
+        final int stockValue = cursor.getInt(stockColumnIndex);
 
         nameTextView.setText(mobileName);
         priceTextView.setText("£ "+priceValue);
@@ -57,10 +56,11 @@ public class MobileCursorAdapter extends CursorAdapter {
             public void onClick(View v) {
 
                 if (stockValue > 0) {
-                    stockValue--;
-                    stockTextView.setText(stockValue + "");
+                    int stockValueLocal = stockValue;
+                    stockValueLocal--;
+                    stockTextView.setText(stockValueLocal + "");
                     ContentValues values = new ContentValues();
-                    values.put(MobileContract.MobileEntry.COLUMN_STOCK, stockValue);
+                    values.put(MobileContract.MobileEntry.COLUMN_STOCK, stockValueLocal);
                     context.getContentResolver().update(uri, values, null, null);
 
                 }
