@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Inventory Empty. Add New Items."
+        android:text="@string/empty_activity"
         android:textAlignment="center"/>
 
     <android.support.design.widget.FloatingActionButton

@@ -7,6 +7,8 @@
     <string name="editor_update_mobile_failed">Update failed</string>
     <string name="editor_update_mobile_successful">Update successful</string>
 
+    <string name="empty_activity">Inventory Empty. Add New Items.</string>
+
     <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
 
     <string name="discard">Discard</string>

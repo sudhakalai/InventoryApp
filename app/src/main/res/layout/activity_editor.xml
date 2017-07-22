@@ -23,7 +23,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             tools:text="Nokia S3"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="@dimen/margin_left"/>
 
     </LinearLayout>
 
@@ -76,7 +76,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             tools:text="10"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="@dimen/margin_left"/>
 
         <Button
             android:id="@+id/minus_button"
@@ -112,7 +112,7 @@
             android:layout_weight="2"
             android:layout_height="wrap_content"
             tools:text="Flipkart"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="@dimen/margin_left"/>
 
     </LinearLayout>
 
@@ -140,11 +140,11 @@
             android:layout_height="wrap_content"
             tools:text="33000000000"
             android:maxLines="2"
-            android:layout_marginLeft="8dp"/>
+            android:layout_marginLeft="@dimen/margin_left"/>
 
             <Button
                 android:id="@+id/order"
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="@dimen/margin_left_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Order more"/>
@@ -163,7 +163,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/image"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/margin_left_16"
         android:layout_gravity="center"/>
 
 </LinearLayout>

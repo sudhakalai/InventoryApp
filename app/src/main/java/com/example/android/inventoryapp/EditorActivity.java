@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -59,9 +58,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private String supplierPhone;
 
-    // Final for the image intent request code
-    private final static int SELECT_PHOTO = 2;
-    // COnstant to be used when asking for storage read
+
+    // Constant to be used when asking for storage read
     private final static int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     //Setting onTouchListener
@@ -146,6 +144,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         
     }
 
+    //This method allows access to photo on Phone if permission is granted
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
