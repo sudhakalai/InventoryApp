@@ -58,6 +58,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private String supplierPhone;
 
+    private String image;
+
 
     // Constant to be used when asking for storage read
     private final static int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
@@ -154,8 +156,12 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    startActivityForResult(new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,
+                            android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+
+                    startActivityForResult(intent, GET_FROM_GALLERY);
 
                 } else {
 
@@ -219,14 +225,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(MobileEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
         values.put(MobileEntry.COLUMN_SUPPLIER_PHONE, supplierPhoneString);
 
+        String photoString;
         if (imageURI != null) {
 
-            String photoString = imageURI.toString();
-            values.put(MobileEntry.COLUMN_IMAGE, photoString);
+            photoString = imageURI.toString();
 
         }else {
-            values.put(MobileEntry.COLUMN_IMAGE, "");
+            photoString = image;
         }
+        values.put(MobileEntry.COLUMN_IMAGE, photoString);
 
         if(mCurrentMobileUri == null){
             Uri newUri = getContentResolver().insert(MobileEntry.CONTENT_URI, values);
@@ -367,7 +374,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             stock = data.getInt(stockColumnIndex);
             String supplierName = data.getString(supplierNameColumnIndex);
             supplierPhone = data.getString(supplierPhoneColumnIndex);
-            String image = data.getString(imageColumnIndex);
+            image = data.getString(imageColumnIndex);
             Uri imageUri = Uri.parse(image);
 
             //Increase stock

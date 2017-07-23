@@ -197,6 +197,7 @@ public class MobileProvider extends ContentProvider{
         Integer stock = values.getAsInteger(MobileEntry.COLUMN_STOCK);
         String supplierName = values.getAsString(MobileEntry.COLUMN_SUPPLIER_NAME);
         String supplierPhone = values.getAsString(MobileEntry.COLUMN_SUPPLIER_PHONE);
+        String productImage = values.getAsString(MobileEntry.COLUMN_IMAGE);
 
 
         if(name == null || name.length() == 0){
@@ -212,6 +213,9 @@ public class MobileProvider extends ContentProvider{
             return false;
         }
         if(supplierPhone == null || supplierPhone.length() == 0){
+            return false;
+        }
+        if(productImage== null || productImage.length() == 0){
             return false;
         }
 
