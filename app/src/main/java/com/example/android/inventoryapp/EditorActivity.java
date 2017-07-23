@@ -224,6 +224,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             String photoString = imageURI.toString();
             values.put(MobileEntry.COLUMN_IMAGE, photoString);
 
+        }else {
+            values.put(MobileEntry.COLUMN_IMAGE, "");
         }
 
         if(mCurrentMobileUri == null){
@@ -249,6 +251,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         Toast.LENGTH_SHORT).show();
             }
         }
+        finish();
     }
 
     @Override
@@ -277,7 +280,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 return true;
             case R.id.action_save:
                 saveMobile();
-                finish();
                 return true;
             case R.id.home:
 
@@ -384,6 +386,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                     if(stock > 0){
                         stock --;
                         mStockEditText.setText(stock+"");
+                    }else if(stock == 0){
+                        Toast.makeText(EditorActivity.this, "No Stock, Order More.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
