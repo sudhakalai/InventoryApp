@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Kalaimaran on 20-Jul-17.
@@ -31,6 +32,8 @@ public class MobileCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
+
+        final Context currentContext = context;
 
         TextView nameTextView = (TextView) view.findViewById(R.id.product_name);
         TextView priceTextView = (TextView) view.findViewById(R.id.product_price);
@@ -63,6 +66,8 @@ public class MobileCursorAdapter extends CursorAdapter {
                     values.put(MobileContract.MobileEntry.COLUMN_STOCK, stockValueLocal);
                     context.getContentResolver().update(uri, values, null, null);
 
+                }else if(stockValue == 0){
+                    Toast.makeText(currentContext, "No Stock, Order More.", Toast.LENGTH_SHORT).show();
                 }
 
             }
